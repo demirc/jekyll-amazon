@@ -1,3 +1,4 @@
+
 # coding: utf-8
 require 'amazon/ecs'
 require 'singleton'
@@ -5,12 +6,12 @@ require 'i18n'
 require 'erb'
 
 module Jekyll
-  module Amazon
+  module AmazonExt
     class AmazonResultCache
       include Singleton
 
       CACHE_DIR = '.amazon-cache/'.freeze
-      RESPONSE_GROUP = 'SalesRank,Images,ItemAttributes,EditorialReview'.freeze
+      RESPONSE_GROUP = 'SalesRank,Images,ItemAttributes,EditorialReview,Offers,OfferSummary'.freeze
 
       ITEM_HASH = {
         asin:             'ASIN',
@@ -20,6 +21,9 @@ module Jekyll
         publisher:        'ItemAttributes/Manufacturer',
         publication_date: 'ItemAttributes/PublicationDate',
         release_date:     'ItemAttributes/ReleaseDate',
+        list_price:       'ItemAttributes/ListPrice',
+        lowest_new_price:  'OfferSummary/LowestNewPrice/FormattedPrice',
+        lowest_used_price: 'OfferSummary/LowestUsedPrice/FormattedPrice',
         detail_page_url:  'DetailPageURL',
         small_image_url:  'SmallImage/URL',
         medium_image_url: 'MediumImage/URL',
@@ -32,12 +36,12 @@ module Jekyll
         FileUtils.mkdir_p(CACHE_DIR)
       end
 
-      def setup(country)
+      def setup(country, associate_tag, aWS_access_key_id, aWS_secret_key)
         ::Amazon::Ecs.debug = debug?
         ::Amazon::Ecs.configure do |options|
-          options[:associate_tag]     = ENV.fetch('ECS_ASSOCIATE_TAG')
-          options[:AWS_access_key_id] = ENV.fetch('AWS_ACCESS_KEY_ID')
-          options[:AWS_secret_key]    = ENV.fetch('AWS_SECRET_KEY')
+          options[:associate_tag]     = associate_tag
+          options[:AWS_access_key_id] = aWS_access_key_id
+          options[:AWS_secret_key]    = aWS_secret_key
           options[:response_group]    = RESPONSE_GROUP
           options[:country]           = country
         end
@@ -120,8 +124,11 @@ module Jekyll
         @site   = context.registers[:site]
         @config = @site.config['jekyll-amazon'] || {}
         country = @config['country'] || DEFAULT_COUNTRY
+        associate_tag = @config['associate_tag'] || ''
+        aWS_access_key_id = @config['AWS_access_key_id'] || ''
+        aWS_secret_key = @config['AWS_secret_key'] || ''
         @template_dir = @config['template_dir']
-        AmazonResultCache.instance.setup(country)
+        AmazonResultCache.instance.setup(country, associate_tag, aWS_access_key_id, aWS_secret_key)
       end
 
       def setup_i18n
@@ -140,10 +147,10 @@ module Jekyll
 
       def render_from_file(type, item)
         if @template_dir
-          template_file = File.expand_path("#{type}.erb", @template_dir)
+          template_file = File.expand_path("#{type}.rhtml", @template_dir)
           file = template_file if File.exist? template_file
         end
-        file ||= File.expand_path("../../templates/#{type}.erb", __dir__)
+        file ||= File.expand_path("../../templates/#{type}.rhtml", __dir__)
         ERB.new(open(file).read).result(binding)
       end
 
@@ -158,4 +165,4 @@ module Jekyll
   end
 end
 
-Liquid::Template.register_tag('amazon', Jekyll::Amazon::AmazonTag)
+Liquid::Template.register_tag('amazon', Jekyll::AmazonExt::AmazonTag)
