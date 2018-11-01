@@ -6,7 +6,7 @@ require 'i18n'
 require 'erb'
 
 module Jekyll
-  module AmazonExt
+  module Amazon
     class AmazonResultCache
       include Singleton
 
@@ -165,4 +165,4 @@ module Jekyll
   end
 end
 
-Liquid::Template.register_tag('amazon', Jekyll::AmazonExt::AmazonTag)
+Liquid::Template.register_tag('amazon', Jekyll::Amazon::AmazonTag)
