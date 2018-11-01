@@ -1,4 +1,4 @@
-# Jekyll::Amazon
+# Jekyll::AmazonExt
 
 Liquid tag for display Amazon Associate Links in Jekyll sites: `{% amazon %}`.
 
