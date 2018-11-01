@@ -1,0 +1,13 @@
+<div class='amzn-box'>
+  <img src="<%= item[:medium_image_url] %>" alt="<%= CGI::escapeHTML(item[:title]) %>"/>
+    <span class="jk-amazon-info">
+        <a class="jk-amazon-image" href="<%= item[:detail_page_url] %>" target="_blank"><%= item[:title] %></a><br/>
+      <% if (item[:lowest_new_price]!='') %>
+      New : <%= item[:lowest_new_price] %>
+    <% end %>
+    <% if (item[:lowest_used_price]!='') %>
+      &nbsp;Used : <%= item[:lowest_used_price] %>
+    <% end %>
+            
+    </span>
+  </div>
