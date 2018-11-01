@@ -18,12 +18,6 @@ Or install it yourself as:
 
     $ gem install jekyll-amazon
 
-And set the environment variables required by the Product Advertising API:
-
-    $ export ECS_ASSOCIATE_TAG=...
-    $ export AWS_ACCESS_KEY_ID=...
-    $ export AWS_SECRET_KEY=...
-
 (`ECS_ASSOCIATE_TAG` is the Tracking ID for your Affiliate account; `AWS_ACCESS_KEY_ID` and `AWS_SECRET_KEY` are your security credentials from your AWS account.  An AWS account is required for the use of this API.)
 
 Finally, add the following to your site's `_config.yml`:
@@ -45,6 +39,9 @@ jekyll-amazon:
                 # default: 'us'
                 # 'br'/'ca'/'cn'/'de'/'es'/'fr'/'in'/'it'/'jp'/'mx/'uk'/'us'
   template_dir: '_templates' # original template directory
+  associate_tag : ''
+  AWS_access_key_id : ''
+  AWS_secret_key: ''
 ```
 
 
